@@ -14,7 +14,21 @@ class WordlePage extends StatefulWidget {
 class _WordlePageState extends State<WordlePage> {
   @override
   Widget build(BuildContext context) {
-    List<String> letters = ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'];
+    List<String> letterRow1 = [
+      'Q',
+      'W',
+      'E',
+      'R',
+      'T',
+      'Y',
+      'U',
+      'I',
+      'O',
+      'P'
+    ];
+    List<String> letterRow2 = ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'];
+
+    List<String> letterRow3 = ['Z', 'X', 'C', 'V', 'B', 'N', 'M'];
     return Scaffold(
       backgroundColor: deepPurple,
       appBar: AppBar(
@@ -111,7 +125,7 @@ class _WordlePageState extends State<WordlePage> {
               height: 47,
             ),
             SizedBox(
-              height: 64,
+              height: 150,
               child: Center(
                 child: Column(
                   children: [
@@ -125,7 +139,7 @@ class _WordlePageState extends State<WordlePage> {
                             child: ListView.builder(
                               shrinkWrap: true,
                               scrollDirection: Axis.horizontal,
-                              itemCount: letters.length,
+                              itemCount: letterRow1.length,
                               itemBuilder: (context, index) => GestureDetector(
                                 onTap: () {},
                                 child: SizedBox(
@@ -133,13 +147,109 @@ class _WordlePageState extends State<WordlePage> {
                                   width: 30,
                                   child: Center(
                                     child: Text(
-                                      letters[index],
-                                      style: TextStyle(color: white),
+                                      letterRow1[index],
+                                      style: TextStyle(
+                                          color: white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 25,
+                          width: 330,
+                          child: Center(
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemCount: letterRow2.length,
+                              itemBuilder: (context, index) => GestureDetector(
+                                onTap: () {},
+                                child: SizedBox(
+                                  height: 20,
+                                  width: 30,
+                                  child: Center(
+                                    child: Text(
+                                      letterRow2[index],
+                                      style: TextStyle(
+                                          color: white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextButton(
+                          onPressed: () {},
+                          child: Text(
+                            'ENTER',
+                            style: TextStyle(
+                                color: grey,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        Center(
+                          child: SizedBox(
+                            height: 25,
+                            width: 210,
+                            child: Center(
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                scrollDirection: Axis.horizontal,
+                                itemCount: letterRow3.length,
+                                itemBuilder: (context, index) =>
+                                    GestureDetector(
+                                  onTap: () {},
+                                  child: SizedBox(
+                                    height: 20,
+                                    width: 30,
+                                    child: Center(
+                                      child: Text(
+                                        letterRow3[index],
+                                        style: TextStyle(
+                                            color: white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {},
+                          child: Text(
+                            'Delete',
+                            style: TextStyle(
+                                color: grey,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600),
                           ),
                         ),
                       ],
@@ -198,7 +308,7 @@ class WordleGame {
     'date',
     'elderberry',
     'fig',
-    'grape'
+    'grape',
   ];
   String _answer = '';
   final List<String> _guesses = [];
