@@ -65,7 +65,7 @@ class _HomeState extends State<Home> {
                   BoxGrid(
                     text1: "WO",
                     text2: "Wordle",
-                    color: green!,
+                    color: green,
                     onTapped: () {
                       Navigator.push(
                           context,

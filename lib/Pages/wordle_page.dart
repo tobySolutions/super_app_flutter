@@ -1,8 +1,15 @@
+import 'package:blue_app/Model/letter_model.dart';
+import 'package:blue_app/providers/wordle_provider.dart';
 import 'package:blue_app/res/colors.dart';
+import 'package:blue_app/res/word_list.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
-
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
+import '../Model/word_model.dart';
+import '../widgets/word_row.dart';
+
+enum GameStatus { playing, submitting, lost, won }
 
 class WordlePage extends StatefulWidget {
   const WordlePage({super.key});
@@ -12,8 +19,22 @@ class WordlePage extends StatefulWidget {
 }
 
 class _WordlePageState extends State<WordlePage> {
+  final GameStatus _gameStatus = GameStatus.playing;
+
+  final List<Word> _board = List.generate(
+      6, (index) => Word(letters: List.generate(5, (index) => Letter.empty())));
+
+  final int _currentWordIndex = 0;
+
+  Word? get _currentWord =>
+      _currentWordIndex < _board.length ? _board[_currentWordIndex] : null;
+
+  final Word _solution = Word.fromString(
+      fiveLetterWords[Random().nextInt(fiveLetterWords.length)].toUpperCase());
+
   @override
   Widget build(BuildContext context) {
+    final inputProvider = Provider.of<WordleInputProvider>(context);
     List<String> letterRow1 = [
       'Q',
       'W',
@@ -77,48 +98,56 @@ class _WordlePageState extends State<WordlePage> {
             SizedBox(
               width: 310,
               height: 350,
-              child: Column(
-                children: [
-                  WordRow(
-                    inputText: "S",
-                    color: darkGrey!,
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  WordRow(
-                    inputText: "S",
-                    color: darkGrey!,
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  WordRow(
-                    inputText: "S",
-                    color: darkGrey!,
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  WordRow(
-                    inputText: "S",
-                    color: darkGrey!,
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  WordRow(
-                    inputText: "S",
-                    color: darkGrey!,
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  WordRow(
-                    inputText: "S",
-                    color: darkGrey!,
-                  ),
-                ],
+              child: Consumer(
+                builder: (context, value, child) => Column(
+                  children: [
+                    WordRow(
+                      inputText: " ",
+                      color: darkGrey,
+                      inputs: inputProvider.inputs1,
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    WordRow(
+                      inputText: " ",
+                      color: darkGrey,
+                      inputs: inputProvider.inputs2,
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    WordRow(
+                      inputText: " ",
+                      color: darkGrey,
+                      inputs: inputProvider.inputs3,
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    WordRow(
+                      inputText: " ",
+                      color: darkGrey,
+                      inputs: inputProvider.inputs4,
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    WordRow(
+                      inputText: " ",
+                      color: darkGrey,
+                      inputs: inputProvider.inputs5,
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    WordRow(
+                      inputText: " ",
+                      color: darkGrey,
+                      inputs: inputProvider.inputs6,
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(
@@ -141,7 +170,10 @@ class _WordlePageState extends State<WordlePage> {
                               scrollDirection: Axis.horizontal,
                               itemCount: letterRow1.length,
                               itemBuilder: (context, index) => GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+                                  inputProvider.input(letterRow1[index]);
+                                  inputProvider.inputs1;
+                                },
                                 child: SizedBox(
                                   height: 20,
                                   width: 30,
@@ -243,7 +275,11 @@ class _WordlePageState extends State<WordlePage> {
                           ),
                         ),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            if (inputProvider.length < 5) {
+                              inputProvider.length++;
+                            }
+                          },
                           child: Text(
                             'Delete',
                             style: TextStyle(
@@ -261,41 +297,6 @@ class _WordlePageState extends State<WordlePage> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class WordRow extends StatelessWidget {
-  WordRow({super.key, required this.color, required this.inputText});
-  String? inputText;
-  Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        SizedBox(
-          width: 310,
-          height: 50,
-          child: ListView.separated(
-            physics: const NeverScrollableScrollPhysics(),
-            scrollDirection: Axis.horizontal,
-            separatorBuilder: (context, index) => const SizedBox(
-              width: 15,
-            ),
-            itemCount: 6,
-            itemBuilder: (context, index) => Container(
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                color: color,
-                shape: BoxShape.circle,
-              ),
-              child: Center(child: Text(inputText!)),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
