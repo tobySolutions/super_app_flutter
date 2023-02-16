@@ -1,9 +1,9 @@
-import 'package:blue_app/Pages/wordle_page.dart';
+import 'package:blue_app/pages/wordle_page.dart';
 import 'package:blue_app/res/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../Widgets/boxgrid.dart';
+import '../widgets/boxgrid.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
