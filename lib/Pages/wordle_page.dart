@@ -7,7 +7,8 @@ import 'dart:math';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import '../Model/word_model.dart';
-import '../widgets/word_row.dart';
+import '../widgets/board.dart';
+import '../widgets/keyboard.dart';
 
 enum GameStatus { playing, submitting, lost, won }
 
@@ -35,21 +36,7 @@ class _WordlePageState extends State<WordlePage> {
   @override
   Widget build(BuildContext context) {
     final inputProvider = Provider.of<WordleInputProvider>(context);
-    List<String> letterRow1 = [
-      'Q',
-      'W',
-      'E',
-      'R',
-      'T',
-      'Y',
-      'U',
-      'I',
-      'O',
-      'P'
-    ];
-    List<String> letterRow2 = ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'];
 
-    List<String> letterRow3 = ['Z', 'X', 'C', 'V', 'B', 'N', 'M'];
     return Scaffold(
       backgroundColor: deepPurple,
       appBar: AppBar(
@@ -98,250 +85,82 @@ class _WordlePageState extends State<WordlePage> {
             SizedBox(
               width: 310,
               height: 350,
-              child: Consumer(
-                builder: (context, value, child) => Column(
-                  children: [
-                    WordRow(
-                      inputText: " ",
-                      color: darkGrey,
-                      inputs: inputProvider.inputs1,
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    WordRow(
-                      inputText: " ",
-                      color: darkGrey,
-                      inputs: inputProvider.inputs2,
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    WordRow(
-                      inputText: " ",
-                      color: darkGrey,
-                      inputs: inputProvider.inputs3,
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    WordRow(
-                      inputText: " ",
-                      color: darkGrey,
-                      inputs: inputProvider.inputs4,
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    WordRow(
-                      inputText: " ",
-                      color: darkGrey,
-                      inputs: inputProvider.inputs5,
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    WordRow(
-                      inputText: " ",
-                      color: darkGrey,
-                      inputs: inputProvider.inputs6,
-                    ),
-                  ],
-                ),
+              child: Board(
+                rows: _board,
               ),
             ),
             const SizedBox(
               height: 47,
             ),
-            SizedBox(
-              height: 150,
-              child: Center(
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          height: 25,
-                          width: 330,
-                          child: Center(
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              scrollDirection: Axis.horizontal,
-                              itemCount: letterRow1.length,
-                              itemBuilder: (context, index) => GestureDetector(
-                                onTap: () {
-                                  inputProvider.input(letterRow1[index]);
-                                  inputProvider.inputs1;
-                                },
-                                child: SizedBox(
-                                  height: 20,
-                                  width: 30,
-                                  child: Center(
-                                    child: Text(
-                                      letterRow1[index],
-                                      style: TextStyle(
-                                          color: white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          height: 25,
-                          width: 330,
-                          child: Center(
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              scrollDirection: Axis.horizontal,
-                              itemCount: letterRow2.length,
-                              itemBuilder: (context, index) => GestureDetector(
-                                onTap: () {},
-                                child: SizedBox(
-                                  height: 20,
-                                  width: 30,
-                                  child: Center(
-                                    child: Text(
-                                      letterRow2[index],
-                                      style: TextStyle(
-                                          color: white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 0,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            'ENTER',
-                            style: TextStyle(
-                                color: grey,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                        Center(
-                          child: SizedBox(
-                            height: 25,
-                            width: 210,
-                            child: Center(
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                scrollDirection: Axis.horizontal,
-                                itemCount: letterRow3.length,
-                                itemBuilder: (context, index) =>
-                                    GestureDetector(
-                                  onTap: () {},
-                                  child: SizedBox(
-                                    height: 20,
-                                    width: 30,
-                                    child: Center(
-                                      child: Text(
-                                        letterRow3[index],
-                                        style: TextStyle(
-                                            color: white,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            if (inputProvider.length < 5) {
-                              inputProvider.length++;
-                            }
-                          },
-                          child: Text(
-                            'Delete',
-                            style: TextStyle(
-                                color: grey,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+            Keyboard(
+              onTap: _onKeyTapped,
+              onDeleteKeyTap: _onDeleteKeyTapped,
+              onEnterKeyTap: () {},
             )
           ],
         ),
       ),
     );
   }
-}
 
-class WordleGame {
-  final List<String> _words = [
-    'apple',
-    'banana',
-    'cherry',
-    'date',
-    'elderberry',
-    'fig',
-    'grape',
-  ];
-  String _answer = '';
-  final List<String> _guesses = [];
-  int _remainingGuesses = 6;
-
-  WordleGame() {
-    _answer = _words[Random().nextInt(_words.length)];
-  }
-
-  String get answer => _answer;
-  List<String> get guesses => _guesses;
-  int get remainingGuesses => _remainingGuesses;
-
-  bool isGameOver() => _remainingGuesses == 0 || isGameWon();
-
-  bool isGameWon() => _guesses.last == _answer;
-
-  List<String> checkGuess(String guess) {
-    _guesses.add(guess);
-    _remainingGuesses--;
-    List<String> feedback = [];
-    for (int i = 0; i < guess.length; i++) {
-      if (_answer.contains(guess[i])) {
-        if (guess[i] == _answer[i]) {
-          feedback.add('black');
-        } else {
-          feedback.add('white');
-        }
-      } else {
-        feedback.add('gray');
-      }
+  void _onKeyTapped(String val) {
+    if (_gameStatus == GameStatus.playing) {
+      setState(() {
+        _currentWord?.addLetter(val);
+      });
     }
-    return feedback;
+  }
+
+  void _onDeleteKeyTapped() {
+    if (_gameStatus == GameStatus.playing) {
+      setState(() {
+        _currentWord?.removeLetter();
+      });
+    }
   }
 }
+
+// class WordleGame {
+//   final List<String> _words = [
+//     'apple',
+//     'banana',
+//     'cherry',
+//     'date',
+//     'elderberry',
+//     'fig',
+//     'grape',
+//   ];
+//   String _answer = '';
+//   final List<String> _guesses = [];
+//   int _remainingGuesses = 6;
+
+//   WordleGame() {
+//     _answer = _words[Random().nextInt(_words.length)];
+//   }
+
+//   String get answer => _answer;
+//   List<String> get guesses => _guesses;
+//   int get remainingGuesses => _remainingGuesses;
+
+//   bool isGameOver() => _remainingGuesses == 0 || isGameWon();
+
+//   bool isGameWon() => _guesses.last == _answer;
+
+//   List<String> checkGuess(String guess) {
+//     _guesses.add(guess);
+//     _remainingGuesses--;
+//     List<String> feedback = [];
+//     for (int i = 0; i < guess.length; i++) {
+//       if (_answer.contains(guess[i])) {
+//         if (guess[i] == _answer[i]) {
+//           feedback.add('black');
+//         } else {
+//           feedback.add('white');
+//         }
+//       } else {
+//         feedback.add('gray');
+//       }
+//     }
+//     return feedback;
+//   }
+// }
