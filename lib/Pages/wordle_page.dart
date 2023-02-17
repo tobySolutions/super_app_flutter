@@ -1,11 +1,9 @@
 import 'package:blue_app/Model/letter_model.dart';
-import 'package:blue_app/providers/wordle_provider.dart';
 import 'package:blue_app/res/colors.dart';
 import 'package:blue_app/res/word_list.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:flutter_svg/svg.dart';
-import 'package:provider/provider.dart';
 import '../Model/word_model.dart';
 import '../widgets/board.dart';
 import '../widgets/keyboard.dart';
@@ -20,23 +18,22 @@ class WordlePage extends StatefulWidget {
 }
 
 class _WordlePageState extends State<WordlePage> {
-  final GameStatus _gameStatus = GameStatus.playing;
+  GameStatus _gameStatus = GameStatus.playing;
 
   final List<Word> _board = List.generate(
       6, (index) => Word(letters: List.generate(5, (index) => Letter.empty())));
 
-  final int _currentWordIndex = 0;
+  int _currentWordIndex = 0;
 
   Word? get _currentWord =>
       _currentWordIndex < _board.length ? _board[_currentWordIndex] : null;
 
-  final Word _solution = Word.fromString(
+  Word _solution = Word.fromString(
       fiveLetterWords[Random().nextInt(fiveLetterWords.length)].toUpperCase());
 
+  final Set<Letter> _keyboardLetters = {};
   @override
   Widget build(BuildContext context) {
-    final inputProvider = Provider.of<WordleInputProvider>(context);
-
     return Scaffold(
       backgroundColor: deepPurple,
       appBar: AppBar(
@@ -87,6 +84,7 @@ class _WordlePageState extends State<WordlePage> {
               height: 350,
               child: Board(
                 rows: _board,
+                letters: _keyboardLetters,
               ),
             ),
             const SizedBox(
@@ -95,7 +93,8 @@ class _WordlePageState extends State<WordlePage> {
             Keyboard(
               onTap: _onKeyTapped,
               onDeleteKeyTap: _onDeleteKeyTapped,
-              onEnterKeyTap: () {},
+              onEnterKeyTap: _onEnterTapped,
+              letters: _keyboardLetters,
             )
           ],
         ),
@@ -117,6 +116,106 @@ class _WordlePageState extends State<WordlePage> {
         _currentWord?.removeLetter();
       });
     }
+  }
+
+  void _onEnterTapped() {
+    if (_gameStatus == GameStatus.playing &&
+        _currentWord != null &&
+        !_currentWord!.letters.contains(Letter.empty())) {
+      _gameStatus = GameStatus.submitting;
+    }
+    for (var i = 0; i < _currentWord!.letters.length; i++) {
+      final currentWordLetter = _currentWord!.letters[i];
+      final currentSolutionLetter = _solution.letters[i];
+
+      setState(() {
+        if (currentWordLetter == currentSolutionLetter) {
+          _currentWord!.letters[i] =
+              currentWordLetter.copyWith(status: LetterStatus.correct);
+        } else if (_solution.letters.contains(currentWordLetter)) {
+          _currentWord!.letters[i] =
+              currentWordLetter.copyWith(status: LetterStatus.inWord);
+        } else {
+          _currentWord!.letters[i] =
+              currentWordLetter.copyWith(status: LetterStatus.notInWord);
+        }
+      });
+      final letter = _keyboardLetters.firstWhere(
+        (element) => element.val == currentWordLetter.val,
+        orElse: () => Letter.empty(),
+      );
+      if (letter.status != LetterStatus.correct) {
+        _keyboardLetters.removeWhere((e) => e.val == currentWordLetter.val);
+        _keyboardLetters.add(_currentWord!.letters[i]);
+      }
+    }
+    _checkIfWinOrLoss();
+  }
+
+  void _checkIfWinOrLoss() {
+    if (_currentWord!.wordString == _solution.wordString) {
+      _gameStatus = GameStatus.won;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: green,
+          content: Text(
+            "You won!",
+            style: TextStyle(color: white),
+          ),
+          action: SnackBarAction(
+            label: "Play Again",
+            onPressed: _restart,
+            textColor: white,
+          ),
+        ),
+      );
+    } else if (_currentWordIndex + 1 >= _board.length) {
+      _gameStatus = GameStatus.lost;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text(
+            "You Lost! Solution: ${_solution.wordString}",
+            style: TextStyle(color: white),
+          ),
+          action: SnackBarAction(
+            label: "Play Again",
+            onPressed: _restart,
+            textColor: white,
+          ),
+        ),
+      );
+    } else {
+      _gameStatus = GameStatus.playing;
+    }
+    _currentWordIndex += 1;
+  }
+
+  void _restart() {
+    setState(
+      () {
+        _gameStatus = GameStatus.playing;
+        _currentWordIndex = 0;
+        _board
+          ..clear()
+          ..addAll(
+            List.generate(
+              6,
+              (index) => Word(
+                letters: List.generate(
+                  5,
+                  (index) => Letter.empty(),
+                ),
+              ),
+            ),
+          );
+        _solution = Word.fromString(
+          fiveLetterWords[Random().nextInt(fiveLetterWords.length)]
+              .toUpperCase(),
+        );
+        _keyboardLetters.clear();
+      },
+    );
   }
 }
 

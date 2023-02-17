@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../Model/letter_model.dart';
 import '../Model/word_model.dart';
 import '../res/colors.dart';
 import 'word_row.dart';
 
 class Board extends StatelessWidget {
-  const Board({super.key, required this.rows});
+  const Board({super.key, required this.rows, required this.letters});
 
   final List<Word> rows;
+  final Set<Letter> letters;
 
   @override
   Widget build(BuildContext context) {
@@ -18,10 +20,18 @@ class Board extends StatelessWidget {
                 height: 57,
                 child: WordRow(
                   color: darkGrey,
-                  children: word.letters
-                      .map(
-                          (e) => LetterContainer(color: darkGrey, inputText: e))
-                      .toList(),
+                  children: word.letters.map((e) {
+                    final letterKey = letters.firstWhere(
+                      (element) => e.val == element.val,
+                      orElse: () => Letter.empty(),
+                    );
+                    return LetterContainer(
+                      color: letterKey != Letter.empty()
+                          ? letterKey.backgroundColor
+                          : darkGrey,
+                      inputText: e,
+                    );
+                  }).toList(),
                 ),
               ),
             )
