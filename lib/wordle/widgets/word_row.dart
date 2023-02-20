@@ -1,7 +1,7 @@
-import 'package:blue_app/Model/letter_model.dart';
+import 'package:blue_app/wordle/Model/letter_model.dart';
 import 'package:flutter/material.dart';
 
-import '../res/colors.dart';
+import '../../res/colors.dart';
 
 class WordRow extends StatelessWidget {
   const WordRow({super.key, required this.color, required this.children});

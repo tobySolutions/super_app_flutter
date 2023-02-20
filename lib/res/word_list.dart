@@ -14,5 +14,5 @@ const List<String> fiveLetterWords = [
   'great',
   'again',
   'still',
-  'could'
+  'could',
 ];

@@ -1,4 +1,4 @@
-import 'package:blue_app/Model/letter_model.dart';
+import 'package:blue_app/wordle/Model/letter_model.dart';
 import 'package:equatable/equatable.dart';
 
 class Word extends Equatable {

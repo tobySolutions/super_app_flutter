@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../Model/letter_model.dart';
 import '../Model/word_model.dart';
-import '../res/colors.dart';
+import '../../res/colors.dart';
 import 'word_row.dart';
 
 class Board extends StatelessWidget {

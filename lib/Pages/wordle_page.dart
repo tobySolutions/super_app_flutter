@@ -1,12 +1,12 @@
-import 'package:blue_app/Model/letter_model.dart';
+import 'package:blue_app/wordle/Model/letter_model.dart';
 import 'package:blue_app/res/colors.dart';
 import 'package:blue_app/res/word_list.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:flutter_svg/svg.dart';
-import '../Model/word_model.dart';
-import '../widgets/board.dart';
-import '../widgets/keyboard.dart';
+import '../wordle/Model/word_model.dart';
+import '../wordle/widgets/board.dart';
+import '../wordle/widgets/keyboard.dart';
 
 enum GameStatus { playing, submitting, lost, won }
 

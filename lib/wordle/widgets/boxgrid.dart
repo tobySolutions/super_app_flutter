@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 
-import '../res/colors.dart';
+import '../../res/colors.dart';
 
 class BoxGrid extends StatelessWidget {
   const BoxGrid(

@@ -1,9 +1,10 @@
 import 'package:blue_app/pages/wordle_page.dart';
 import 'package:blue_app/res/colors.dart';
+import 'package:blue_app/video_call/pages/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../widgets/boxgrid.dart';
+import '../wordle/widgets/boxgrid.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -68,16 +69,23 @@ class _HomeState extends State<Home> {
                     color: green,
                     onTapped: () {
                       Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                              builder: (context) => const WordlePage()));
+                        context,
+                        CupertinoPageRoute(
+                          builder: (context) => const WordlePage(),
+                        ),
+                      );
                     },
                   ),
                   BoxGrid(
                     text1: "VC",
                     text2: "Video Call",
                     color: orange,
-                    onTapped: () {},
+                    onTapped: () {
+                      Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                              builder: (context) => const IndexPage()));
+                    },
                   ),
                   BoxGrid(
                     text1: "",
