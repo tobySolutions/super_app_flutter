@@ -15,10 +15,11 @@ class _CallPageState extends State<CallPage> {
   final _users = <int>[];
   final _infoStrings = <String>[];
   bool mute = false;
-  RtcEngine? _engine;
+  bool _localUserJoined = false;
+  late RtcEngine _engine;
 
   @override
-  void initState() async{
+  void initState() async {
     super.initState();
     initialize();
   }
@@ -26,8 +27,7 @@ class _CallPageState extends State<CallPage> {
   @override
   void dispose() {
     _users.clear();
-    _engine!.leaveChannel();
-    
+    _engine.leaveChannel();
 
     super.dispose();
   }
@@ -40,7 +40,60 @@ class _CallPageState extends State<CallPage> {
       });
       return;
     }
-    _engine!.cr\
+    _engine = createAgoraRtcEngine();
+    await _engine.initialize(
+      const RtcEngineContext(
+        appId: appId,
+        channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
+      ),
+    );
+    _addAgoraEventHandler();
+    _engine.setClientRole(role: widget.clientRole!);
+    VideoEncoderConfiguration configuration = const VideoEncoderConfiguration();
+    await _engine.setVideoEncoderConfiguration(configuration);
+    await _engine.enableVideo();
+    await _engine.startPreview();
+
+    await _engine.joinChannel(
+      token: token,
+      channelId: widget.channelName!,
+      uid: 0,
+      options: const ChannelMediaOptions(),
+    );
+  }
+
+  void _addAgoraEventHandler() {
+    _engine.registerEventHandler(
+      // Handle different events during the video call
+      RtcEngineEventHandler(
+        onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
+          setState(() {
+            final info = "local user ${connection.localUid} joined";
+            _infoStrings.add(info);
+            _localUserJoined = true;
+          });
+        },
+        onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
+          setState(() {
+            final info = "remote user $remoteUid joined";
+            _infoStrings.add(info);
+            _users.add(remoteUid);
+          });
+        },
+        onUserOffline: (RtcConnection connection, int remoteUid,
+            UserOfflineReasonType reason) {
+          setState(() {
+            final info = "remote user $remoteUid left channel";
+            _infoStrings.add(info);
+            _users.remove(remoteUid);
+          });
+        },
+        onTokenPrivilegeWillExpire: (RtcConnection connection, String token) {
+          debugPrint(
+              '[onTokenPrivilegeWillExpire] connection: ${connection.toJson()}, token: $token');
+        },
+      ),
+    );
   }
 
   @override
@@ -49,6 +102,9 @@ class _CallPageState extends State<CallPage> {
       appBar: AppBar(
         title: const Text('Blue App'),
         centerTitle: true,
+      ),
+      body: Stack(
+        children: const [],
       ),
     );
   }
