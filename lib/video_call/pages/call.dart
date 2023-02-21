@@ -1,3 +1,4 @@
+import 'package:blue_app/res/colors.dart';
 import 'package:blue_app/video_call/utils/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
@@ -96,15 +97,117 @@ class _CallPageState extends State<CallPage> {
     );
   }
 
+  Widget _viewRows() {
+    final List<StatefulWidget> list = [];
+    if (widget.clientRole == ClientRoleType.clientRoleBroadcaster) {
+      list.add(AgoraVideoView(
+        controller: VideoViewController(
+          rtcEngine: _engine,
+          canvas: const VideoCanvas(uid: 0),
+        ),
+      ));
+    }
+    for (var uid in _users) {
+      list.add(AgoraVideoView(
+        controller: VideoViewController.remote(
+          rtcEngine: _engine,
+          canvas: VideoCanvas(uid: uid),
+          connection: RtcConnection(channelId: widget.channelName),
+        ),
+      ));
+    }
+    final views = list;
+    return Column(
+      children:
+          List.generate(views.length, (index) => Expanded(child: views[index])),
+    );
+  }
+
+  Widget _toolbar() {
+    // if (widget.clientRole == ClientRoleType.clientRoleAudience) {}
+    return Container(
+      alignment: Alignment.bottomCenter,
+      padding: const EdgeInsets.symmetric(vertical: 40),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          RawMaterialButton(
+            onPressed: () {},
+            fillColor: white,
+            child: Icon(
+              Icons.videocam_off_outlined,
+              color: purple,
+            ),
+          ),
+          RawMaterialButton(
+            onPressed: () {
+              setState(() {
+                mute = !mute;
+              });
+              _engine.muteLocalAudioStream(mute);
+            },
+            shape: const CircleBorder(),
+            fillColor: mute ? purple : white,
+            padding: const EdgeInsets.all(12),
+            elevation: 2.0,
+            child: Icon(
+              mute ? Icons.mic_off_outlined : Icons.mic_outlined,
+              size: 20,
+              color: mute ? white : purple,
+            ),
+          ),
+          RawMaterialButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            shape: const CircleBorder(),
+            fillColor: Colors.red,
+            padding: const EdgeInsets.all(12),
+            elevation: 2.0,
+            child: Icon(
+              Icons.call_end_outlined,
+              color: white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _panel() {
+    return Visibility(
+      child: Container(
+        alignment: Alignment.bottomRight,
+        child: Text(
+          "You have ${_users.length} Participants left",
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Blue App'),
         centerTitle: true,
+        actions: [
+          RawMaterialButton(
+            onPressed: () {
+              _engine.switchCamera();
+            },
+            fillColor: const Color.fromRGBO(186, 186, 186, 0.5),
+            child: const Icon(Icons.switch_camera_outlined),
+          )
+        ],
       ),
-      body: Stack(
-        children: const [],
+      body: Center(
+        child: Stack(
+          children: [
+            _viewRows(),
+            _panel(),
+            _toolbar(),
+          ],
+        ),
       ),
     );
   }
