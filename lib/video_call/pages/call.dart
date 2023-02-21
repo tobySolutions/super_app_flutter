@@ -20,7 +20,7 @@ class _CallPageState extends State<CallPage> {
   late RtcEngine _engine;
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
     initialize();
   }
@@ -133,7 +133,9 @@ class _CallPageState extends State<CallPage> {
         children: <Widget>[
           RawMaterialButton(
             onPressed: () {},
+            shape: const CircleBorder(),
             fillColor: white,
+            padding: const EdgeInsets.all(12),
             child: Icon(
               Icons.videocam_off_outlined,
               color: purple,
@@ -157,6 +159,16 @@ class _CallPageState extends State<CallPage> {
             ),
           ),
           RawMaterialButton(
+            onPressed: () {},
+            shape: const CircleBorder(),
+            fillColor: white,
+            padding: const EdgeInsets.all(12),
+            child: Icon(
+              Icons.person_add_alt,
+              color: purple,
+            ),
+          ),
+          RawMaterialButton(
             onPressed: () {
               Navigator.pop(context);
             },
@@ -174,12 +186,15 @@ class _CallPageState extends State<CallPage> {
     );
   }
 
+// gives info on amount of participants in the call
   Widget _panel() {
     return Visibility(
       child: Container(
         alignment: Alignment.bottomRight,
+        padding: const EdgeInsets.fromLTRB(0, 0, 20, 110),
         child: Text(
           "You have ${_users.length} Participants left",
+          style: TextStyle(color: white),
         ),
       ),
     );
@@ -188,22 +203,36 @@ class _CallPageState extends State<CallPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        actions: [
-          RawMaterialButton(
-            onPressed: () {
-              _engine.switchCamera();
-            },
-            fillColor: const Color.fromRGBO(186, 186, 186, 0.5),
-            child: const Icon(Icons.switch_camera_outlined),
-          )
-        ],
-      ),
       body: Center(
         child: Stack(
           children: [
             _viewRows(),
+            Container(
+              alignment: Alignment.topCenter,
+              padding: const EdgeInsets.symmetric(vertical: 48),
+              child: ListTile(
+                leading: IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: Icon(
+                      Icons.arrow_back_ios,
+                      color: white,
+                    )),
+                trailing: MaterialButton(
+                  color: const Color.fromRGBO(186, 186, 186, 0.5),
+                  onPressed: () {
+                    _engine.switchCamera();
+                  },
+                  padding: const EdgeInsets.all(15),
+                  shape: const CircleBorder(),
+                  child: Icon(
+                    Icons.switch_camera_outlined,
+                    color: white,
+                  ),
+                ),
+              ),
+            ),
             _panel(),
             _toolbar(),
           ],
