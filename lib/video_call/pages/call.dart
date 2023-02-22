@@ -189,6 +189,7 @@ class _CallPageState extends State<CallPage> {
 // gives info on amount of participants in the call
   Widget _panel() {
     return Visibility(
+      visible: _users.isNotEmpty,
       child: Container(
         alignment: Alignment.bottomRight,
         padding: const EdgeInsets.fromLTRB(0, 0, 20, 110),
