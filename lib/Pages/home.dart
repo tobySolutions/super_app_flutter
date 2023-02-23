@@ -1,9 +1,9 @@
 import 'package:blue_app/pages/wordle_page.dart';
 import 'package:blue_app/res/colors.dart';
-import 'package:blue_app/video_call/pages/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../video_call/pages/demo.dart';
 import '../wordle/widgets/boxgrid.dart';
 
 class Home extends StatefulWidget {
@@ -84,7 +84,7 @@ class _HomeState extends State<Home> {
                       Navigator.push(
                           context,
                           CupertinoPageRoute(
-                              builder: (context) => const IndexPage()));
+                              builder: (context) => const VideoCallDemo()));
                     },
                   ),
                   BoxGrid(
