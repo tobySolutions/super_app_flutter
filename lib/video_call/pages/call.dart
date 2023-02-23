@@ -17,6 +17,7 @@ class _CallPageState extends State<CallPage> {
   final _infoStrings = <String>[];
   bool mute = false;
   bool _localUserJoined = false;
+  int? _remoteUid;
   late RtcEngine _engine;
 
   @override
@@ -48,8 +49,9 @@ class _CallPageState extends State<CallPage> {
         channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
       ),
     );
-    _addAgoraEventHandler();
+
     _engine.setClientRole(role: widget.clientRole!);
+    _addAgoraEventHandler();
     VideoEncoderConfiguration configuration = const VideoEncoderConfiguration();
     await _engine.setVideoEncoderConfiguration(configuration);
     await _engine.enableVideo();
@@ -77,7 +79,9 @@ class _CallPageState extends State<CallPage> {
         onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
           setState(() {
             final info = "remote user $remoteUid joined";
+
             _infoStrings.add(info);
+            _remoteUid = remoteUid;
             _users.add(remoteUid);
           });
         },
@@ -87,6 +91,7 @@ class _CallPageState extends State<CallPage> {
             final info = "remote user $remoteUid left channel";
             _infoStrings.add(info);
             _users.remove(remoteUid);
+            _remoteUid = null;
           });
         },
         onTokenPrivilegeWillExpire: (RtcConnection connection, String token) {
@@ -97,31 +102,31 @@ class _CallPageState extends State<CallPage> {
     );
   }
 
-  Widget _viewRows() {
-    final List<StatefulWidget> list = [];
-    if (widget.clientRole == ClientRoleType.clientRoleBroadcaster) {
-      list.add(AgoraVideoView(
-        controller: VideoViewController(
-          rtcEngine: _engine,
-          canvas: const VideoCanvas(uid: 0),
-        ),
-      ));
-    }
-    for (var uid in _users) {
-      list.add(AgoraVideoView(
-        controller: VideoViewController.remote(
-          rtcEngine: _engine,
-          canvas: VideoCanvas(uid: uid),
-          connection: RtcConnection(channelId: widget.channelName),
-        ),
-      ));
-    }
-    final views = list;
-    return Column(
-      children:
-          List.generate(views.length, (index) => Expanded(child: views[index])),
-    );
-  }
+  // Widget _viewRows() {
+  //   final List<StatefulWidget> list = [];
+  //   if (widget.clientRole == ClientRoleType.clientRoleBroadcaster) {
+  //     list.add(AgoraVideoView(
+  //       controller: VideoViewController(
+  //         rtcEngine: _engine,
+  //         canvas: const VideoCanvas(uid: 0),
+  //       ),
+  //     ));
+  //   }
+  //   for (var uid in _users) {
+  //     list.add(AgoraVideoView(
+  //       controller: VideoViewController.remote(
+  //         rtcEngine: _engine,
+  //         canvas: VideoCanvas(uid: uid),
+  //         connection: RtcConnection(channelId: widget.channelName),
+  //       ),
+  //     ));
+  //   }
+  //   final views = list;
+  //   return Column(
+  //     children:
+  //         List.generate(views.length, (index) => Expanded(child: views[index])),
+  //   );
+  // }
 
   Widget _toolbar() {
     // if (widget.clientRole == ClientRoleType.clientRoleAudience) {}
@@ -204,10 +209,42 @@ class _CallPageState extends State<CallPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: black,
       body: Center(
         child: Stack(
           children: [
-            _viewRows(),
+            // _viewRows(),
+            Center(
+              child: _remoteUid != null
+                  ? AgoraVideoView(
+                      controller: VideoViewController.remote(
+                          rtcEngine: _engine,
+                          canvas: VideoCanvas(uid: _remoteUid),
+                          connection:
+                              RtcConnection(channelId: widget.channelName)),
+                    )
+                  : Text(
+                      'Please wait for remote user to join',
+                      style: TextStyle(color: white),
+                    ),
+            ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: SizedBox(
+                width: 100,
+                height: 150,
+                child: Center(
+                  child: _localUserJoined
+                      ? AgoraVideoView(
+                          controller: VideoViewController(
+                            rtcEngine: _engine,
+                            canvas: const VideoCanvas(uid: 0),
+                          ),
+                        )
+                      : const CircularProgressIndicator(),
+                ),
+              ),
+            ),
             Container(
               alignment: Alignment.topCenter,
               padding: const EdgeInsets.symmetric(vertical: 48),
