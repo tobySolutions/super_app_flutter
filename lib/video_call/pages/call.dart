@@ -102,31 +102,31 @@ class _CallPageState extends State<CallPage> {
     );
   }
 
-  // Widget _viewRows() {
-  //   final List<StatefulWidget> list = [];
-  //   if (widget.clientRole == ClientRoleType.clientRoleBroadcaster) {
-  //     list.add(AgoraVideoView(
-  //       controller: VideoViewController(
-  //         rtcEngine: _engine,
-  //         canvas: const VideoCanvas(uid: 0),
-  //       ),
-  //     ));
-  //   }
-  //   for (var uid in _users) {
-  //     list.add(AgoraVideoView(
-  //       controller: VideoViewController.remote(
-  //         rtcEngine: _engine,
-  //         canvas: VideoCanvas(uid: uid),
-  //         connection: RtcConnection(channelId: widget.channelName),
-  //       ),
-  //     ));
-  //   }
-  //   final views = list;
-  //   return Column(
-  //     children:
-  //         List.generate(views.length, (index) => Expanded(child: views[index])),
-  //   );
-  // }
+  Widget _viewRows() {
+    final List<StatefulWidget> list = [];
+    if (widget.clientRole == ClientRoleType.clientRoleBroadcaster) {
+      list.add(AgoraVideoView(
+        controller: VideoViewController(
+          rtcEngine: _engine,
+          canvas: const VideoCanvas(uid: 0),
+        ),
+      ));
+    }
+    for (var uid in _users) {
+      list.add(AgoraVideoView(
+        controller: VideoViewController.remote(
+          rtcEngine: _engine,
+          canvas: VideoCanvas(uid: uid),
+          connection: RtcConnection(channelId: widget.channelName),
+        ),
+      ));
+    }
+    final views = list;
+    return Column(
+      children:
+          List.generate(views.length, (index) => Expanded(child: views[index])),
+    );
+  }
 
   Widget _toolbar() {
     // if (widget.clientRole == ClientRoleType.clientRoleAudience) {}
@@ -213,38 +213,7 @@ class _CallPageState extends State<CallPage> {
       body: Center(
         child: Stack(
           children: [
-            // _viewRows(),
-            Center(
-              child: _remoteUid != null
-                  ? AgoraVideoView(
-                      controller: VideoViewController.remote(
-                          rtcEngine: _engine,
-                          canvas: VideoCanvas(uid: _remoteUid),
-                          connection:
-                              RtcConnection(channelId: widget.channelName)),
-                    )
-                  : Text(
-                      'Please wait for remote user to join',
-                      style: TextStyle(color: white),
-                    ),
-            ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: SizedBox(
-                width: 100,
-                height: 150,
-                child: Center(
-                  child: _localUserJoined
-                      ? AgoraVideoView(
-                          controller: VideoViewController(
-                            rtcEngine: _engine,
-                            canvas: const VideoCanvas(uid: 0),
-                          ),
-                        )
-                      : const CircularProgressIndicator(),
-                ),
-              ),
-            ),
+            _viewRows(),
             Container(
               alignment: Alignment.topCenter,
               padding: const EdgeInsets.symmetric(vertical: 48),
