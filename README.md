@@ -1,4 +1,4 @@
-# blue_app
+# Super_app
 
 A new Flutter project.
 
